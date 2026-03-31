@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDialog } from "../context/DialogContext";
 import { useCompany } from "../context/CompanyContext";
@@ -37,15 +38,16 @@ import { MarkdownEditor, type MarkdownEditorRef, type MentionOption } from "./Ma
 import { StatusBadge } from "./StatusBadge";
 import { ChoosePathButton } from "./PathInstructionsModal";
 
-const projectStatuses = [
-  { value: "backlog", label: "Backlog" },
-  { value: "planned", label: "Planned" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "completed", label: "Completed" },
-  { value: "cancelled", label: "Cancelled" },
-];
+const projectStatusKeys = [
+  { value: "backlog", key: "newProjectDialog.backlog" },
+  { value: "planned", key: "newProjectDialog.planned" },
+  { value: "in_progress", key: "newProjectDialog.inProgress" },
+  { value: "completed", key: "newProjectDialog.completed" },
+  { value: "cancelled", key: "newProjectDialog.cancelled" },
+] as const;
 
 export function NewProjectDialog() {
+  const { t } = useTranslation();
   const { newProjectOpen, closeNewProject } = useDialog();
   const { selectedCompanyId, selectedCompany } = useCompany();
   const queryClient = useQueryClient();
@@ -344,7 +346,7 @@ export function NewProjectDialog() {
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-40 p-1" align="start">
-              {projectStatuses.map((s) => (
+              {projectStatusKeys.map((s) => (
                 <button
                   key={s.value}
                   className={cn(
@@ -353,7 +355,7 @@ export function NewProjectDialog() {
                   )}
                   onClick={() => { setStatus(s.value); setStatusOpen(false); }}
                 >
-                  {s.label}
+                  {t(s.key)}
                 </button>
               ))}
             </PopoverContent>
