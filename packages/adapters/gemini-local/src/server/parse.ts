@@ -9,6 +9,10 @@ function collectMessageText(message: unknown): string[] {
   const record = parseObject(message);
   const direct = asString(record.text, "").trim();
   const lines: string[] = direct ? [direct] : [];
+  if (typeof record.content === "string") {
+    const text = record.content.trim();
+    if (text) lines.push(text);
+  }
   const content = Array.isArray(record.content) ? record.content : [];
 
   for (const partRaw of content) {
@@ -96,6 +100,11 @@ export function parseGeminiJsonl(stdout: string) {
     if (foundSessionId) sessionId = foundSessionId;
 
     const type = asString(event.type, "").trim();
+
+    if (type === "message" && asString(event.role, "").trim() === "assistant") {
+      messages.push(...collectMessageText(event));
+      continue;
+    }
 
     if (type === "assistant") {
       messages.push(...collectMessageText(event.message));
