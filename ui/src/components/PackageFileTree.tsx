@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
 import {
   ChevronDown,
@@ -163,6 +164,25 @@ export const FRONTMATTER_FIELD_LABELS: Record<string, string> = {
   recurring: "Recurring",
   targetDate: "Target date",
 };
+
+/** Returns a translated version of FRONTMATTER_FIELD_LABELS for use in components. */
+export function useFrontmatterFieldLabels(): Record<string, string> {
+  const { t } = useTranslation();
+  return {
+    name: t("frontmatterFields.name"),
+    title: t("frontmatterFields.title"),
+    kind: t("frontmatterFields.kind"),
+    reportsTo: t("frontmatterFields.reportsTo"),
+    skills: t("frontmatterFields.skills"),
+    status: t("frontmatterFields.status"),
+    description: t("frontmatterFields.description"),
+    priority: t("frontmatterFields.priority"),
+    assignee: t("frontmatterFields.assignee"),
+    project: t("frontmatterFields.project"),
+    recurring: t("frontmatterFields.recurring"),
+    targetDate: t("frontmatterFields.targetDate"),
+  };
+}
 
 // ── File tree component ───────────────────────────────────────────────
 

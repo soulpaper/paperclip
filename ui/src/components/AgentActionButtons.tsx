@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

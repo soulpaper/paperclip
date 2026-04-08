@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Tooltip,
   TooltipTrigger,
@@ -70,6 +71,69 @@ export const adapterLabels: Record<string, string> = {
 };
 
 export const roleLabels = AGENT_ROLE_LABELS as Record<string, string>;
+
+/**
+ * Returns translated tooltip help strings.
+ * Use instead of the plain `help` object when a translation function is available.
+ */
+export function getHelp(t: (key: string) => string): Record<string, string> {
+  return {
+    name: t("agentConfig.help.name"),
+    title: t("agentConfig.help.title"),
+    role: t("agentConfig.help.role"),
+    reportsTo: t("agentConfig.help.reportsTo"),
+    capabilities: t("agentConfig.help.capabilities"),
+    adapterType: t("agentConfig.help.adapterType"),
+    cwd: t("agentConfig.help.cwd"),
+    promptTemplate: t("agentConfig.help.promptTemplate"),
+    model: t("agentConfig.help.model"),
+    thinkingEffort: t("agentConfig.help.thinkingEffort"),
+    chrome: t("agentConfig.help.chrome"),
+    dangerouslySkipPermissions: t("agentConfig.help.dangerouslySkipPermissions"),
+    dangerouslyBypassSandbox: t("agentConfig.help.dangerouslyBypassSandbox"),
+    search: t("agentConfig.help.search"),
+    workspaceStrategy: t("agentConfig.help.workspaceStrategy"),
+    workspaceBaseRef: t("agentConfig.help.workspaceBaseRef"),
+    workspaceBranchTemplate: t("agentConfig.help.workspaceBranchTemplate"),
+    worktreeParentDir: t("agentConfig.help.worktreeParentDir"),
+    runtimeServicesJson: t("agentConfig.help.runtimeServicesJson"),
+    maxTurnsPerRun: t("agentConfig.help.maxTurnsPerRun"),
+    command: t("agentConfig.help.command"),
+    localCommand: t("agentConfig.help.localCommand"),
+    args: t("agentConfig.help.args"),
+    extraArgs: t("agentConfig.help.extraArgs"),
+    envVars: t("agentConfig.help.envVars"),
+    bootstrapPrompt: t("agentConfig.help.bootstrapPrompt"),
+    payloadTemplateJson: t("agentConfig.help.payloadTemplateJson"),
+    webhookUrl: t("agentConfig.help.webhookUrl"),
+    heartbeatInterval: t("agentConfig.help.heartbeatInterval"),
+    intervalSec: t("agentConfig.help.intervalSec"),
+    timeoutSec: t("agentConfig.help.timeoutSec"),
+    graceSec: t("agentConfig.help.graceSec"),
+    wakeOnDemand: t("agentConfig.help.wakeOnDemand"),
+    cooldownSec: t("agentConfig.help.cooldownSec"),
+    maxConcurrentRuns: t("agentConfig.help.maxConcurrentRuns"),
+    budgetMonthlyCents: t("agentConfig.help.budgetMonthlyCents"),
+  };
+}
+
+/**
+ * Returns translated adapter display labels.
+ * Use instead of the plain `adapterLabels` object when a translation function is available.
+ */
+export function getAdapterLabels(t: (key: string) => string): Record<string, string> {
+  return {
+    claude_local: t("agentConfig.adapterLabels.claude_local"),
+    codex_local: t("agentConfig.adapterLabels.codex_local"),
+    gemini_local: t("agentConfig.adapterLabels.gemini_local"),
+    opencode_local: t("agentConfig.adapterLabels.opencode_local"),
+    openclaw_gateway: t("agentConfig.adapterLabels.openclaw_gateway"),
+    cursor: t("agentConfig.adapterLabels.cursor"),
+    hermes_local: t("agentConfig.adapterLabels.hermes_local"),
+    process: t("agentConfig.adapterLabels.process"),
+    http: t("agentConfig.adapterLabels.http"),
+  };
+}
 
 /* ---- Primitive components ---- */
 
@@ -400,6 +464,7 @@ export function DraftNumberInput({
  * type the path due to browser security limitations.
  */
 export function ChoosePathButton() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -408,54 +473,53 @@ export function ChoosePathButton() {
         className="inline-flex items-center rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground hover:bg-accent/50 transition-colors shrink-0"
         onClick={() => setOpen(true)}
       >
-        Choose
+        {t("agentConfig.choosePath")}
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Specify path manually</DialogTitle>
+            <DialogTitle>{t("agentConfig.specifyPathTitle")}</DialogTitle>
             <DialogDescription>
-              Browser security blocks apps from reading full local paths via a file picker.
-              Copy the absolute path and paste it into the input.
+              {t("agentConfig.specifyPathDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 text-sm">
             <section className="space-y-1.5">
-              <p className="font-medium">macOS (Finder)</p>
+              <p className="font-medium">{t("agentConfig.specifyPathMacOS")}</p>
               <ol className="list-decimal space-y-1 pl-5 text-muted-foreground">
-                <li>Find the folder in Finder.</li>
-                <li>Hold <kbd>Option</kbd> and right-click the folder.</li>
-                <li>Click "Copy &lt;folder name&gt; as Pathname".</li>
-                <li>Paste the result into the path input.</li>
+                <li>{t("agentConfig.specifyPathMacStep1")}</li>
+                <li>{t("agentConfig.specifyPathMacStep2")}</li>
+                <li>{t("agentConfig.specifyPathMacStep3")}</li>
+                <li>{t("agentConfig.specifyPathMacStep4")}</li>
               </ol>
               <p className="rounded-md bg-muted px-2 py-1 font-mono text-xs">
                 /Users/yourname/Documents/project
               </p>
             </section>
             <section className="space-y-1.5">
-              <p className="font-medium">Windows (File Explorer)</p>
+              <p className="font-medium">{t("agentConfig.specifyPathWindows")}</p>
               <ol className="list-decimal space-y-1 pl-5 text-muted-foreground">
-                <li>Find the folder in File Explorer.</li>
-                <li>Hold <kbd>Shift</kbd> and right-click the folder.</li>
-                <li>Click "Copy as path".</li>
-                <li>Paste the result into the path input.</li>
+                <li>{t("agentConfig.specifyPathWinStep1")}</li>
+                <li>{t("agentConfig.specifyPathWinStep2")}</li>
+                <li>{t("agentConfig.specifyPathWinStep3")}</li>
+                <li>{t("agentConfig.specifyPathWinStep4")}</li>
               </ol>
               <p className="rounded-md bg-muted px-2 py-1 font-mono text-xs">
                 C:\Users\yourname\Documents\project
               </p>
             </section>
             <section className="space-y-1.5">
-              <p className="font-medium">Terminal fallback (macOS/Linux)</p>
+              <p className="font-medium">{t("agentConfig.specifyPathTerminal")}</p>
               <ol className="list-decimal space-y-1 pl-5 text-muted-foreground">
-                <li>Run <code>cd /path/to/folder</code>.</li>
-                <li>Run <code>pwd</code>.</li>
-                <li>Copy the output and paste it into the path input.</li>
+                <li>{t("agentConfig.specifyPathTermStep1")}</li>
+                <li>{t("agentConfig.specifyPathTermStep2")}</li>
+                <li>{t("agentConfig.specifyPathTermStep3")}</li>
               </ol>
             </section>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
-              OK
+              {t("agentConfig.specifyPathOK")}
             </Button>
           </DialogFooter>
         </DialogContent>

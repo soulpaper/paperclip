@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { HeartbeatRun } from "@paperclipai/shared";
 
 /* ---- Utilities ---- */

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { UserPlus, Lightbulb, ShieldAlert, ShieldCheck } from "lucide-react";
 import { formatCents } from "../lib/utils";
 

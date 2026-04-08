@@ -5,6 +5,7 @@ import type { ComponentProps } from "react";
 import { createRoot } from "react-dom/client";
 import type { Issue } from "@paperclipai/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import "@/i18n";
 import { FailedRunInboxRow, InboxIssueMetaLeading } from "./Inbox";
 
 vi.mock("@/lib/router", () => ({
