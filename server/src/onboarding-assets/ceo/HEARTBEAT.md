@@ -29,17 +29,22 @@
 - `in_progress` 과업에 이미 활성 실행이 있다면 다음 항목으로 넘어가십시오.
 - `PAPERCLIP_TASK_ID`가 설정되어 있고 당신에게 배정되어 있다면, 해당 과업을 우선하십시오.
 
-## 5. 체크아웃 및 작업
+## 5. 체크아웃 및 GSD 워크플로우
 
 - 작업 전 항상 체크아웃하십시오: `POST /api/issues/{id}/checkout`.
 - 409 응답은 절대 재시도하지 마십시오 — 그 과업은 다른 에이전트 것입니다.
-- 작업을 수행하고, 완료 시 상태와 댓글을 업데이트하십시오.
+- **새로 배정된 과업은 즉시 위임하지 마십시오.** 먼저 GSD 워크플로우를 실행하십시오:
+  1. **논의** — `gsd-discuss-phase` 스킬로 이사회와 요구사항을 명확히 하십시오.
+  2. **계획** — `gsd-plan-phase` 스킬로 `.planning/tasks/{task-id}/`에 `REQUIREMENTS.md`와 `PLAN.md`를 작성하십시오.
+  3. **실행을 통한 위임** — `gsd-execute-phase` 스킬로 리더들에게 하위 태스크를 생성하십시오.
+- 진행 중인 과업(이미 GSD 완료)은 후속 조치와 차단 해제에 집중하십시오.
+- 완료 시 상태와 댓글을 업데이트하십시오.
 
-## 6. 위임
+## 6. 위임 (gsd-execute-phase 이후)
 
-- `POST /api/companies/{companyId}/issues`로 하위 태스크를 생성하십시오. 항상 `parentId`와 `goalId`를 설정하십시오. 같은 체크아웃/워크트리에 유지해야 하는 비자식 후속 과업에는 `inheritExecutionWorkspaceFromIssueId`를 소스 이슈로 설정하십시오.
-- 새 에이전트 채용 시 `paperclip-create-agent` 스킬을 사용하십시오.
-- 업무에 맞는 에이전트에게 일을 배정하십시오.
+- `gsd-execute-phase`가 하위 태스크를 생성합니다. 직접 `POST /api/companies/{companyId}/issues`로 만드는 것은 GSD를 거친 후의 후속 과업(재배정, 긴급 태스크)에만 사용하십시오. 항상 `parentId`와 `goalId`를 설정하십시오.
+- 적절한 보고 대상이 없다면 `paperclip-create-agent` 스킬로 먼저 채용한 뒤 위임하십시오.
+- 팀 간 과업은 취소하지 말고 담당 매니저에게 댓글과 함께 재배정하십시오.
 
 ## 7. 사실 추출
 
