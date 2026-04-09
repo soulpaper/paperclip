@@ -271,6 +271,25 @@ We welcome contributions. See the [contributing guide](CONTRIBUTING.md) for deta
 
 <br/>
 
+## Fork 커스터마이징 내역 (soulpaper/paperclip)
+
+upstream(`paperclipai/paperclip`)으로부터 fork하여 운영 중인 개인 커스터마이징 브랜치(`feature/i18n-korean`)의 변경 내역입니다.
+
+### 2026-04-10
+
+**에이전트 지침 개선**
+- 리더급 에이전트 `AGENTS.md` 구조 개선
+  - `수행하지 않는 업무`의 중의적 문구 제거 (`gsd-plan-phase 및 git commit 없이 작업자에게 직접 위임`)
+  - 위임 전 프로세스 순서(리서치→검토→계획→커밋)를 `직접 수행하는 업무` 항목으로 이동
+  - 라이브 에이전트 4개에 동기화 적용
+
+**이전 작업 (`feature/i18n-korean` 브랜치)**
+- 온보딩 에이전트 지침 전체 한국어 번역
+- CEO HEARTBEAT에 GSD 워크플로우 단계 반영
+- 3계층 에이전트 계층 구조 완성 (CEO → 리더 → 작업자)
+- task 기반 플래닝 구조 도입 (`.planning/tasks/{task-id}/`)
+- Docker: docker-ce-cli 및 gemini home mount 추가
+
 ## License
 
 MIT &copy; 2026 Paperclip
