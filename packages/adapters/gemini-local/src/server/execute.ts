@@ -32,7 +32,7 @@ import {
   isGeminiUnknownSessionError,
   parseGeminiJsonl,
 } from "./parse.js";
-import { firstNonEmptyLine } from "./utils.js";
+import { firstNonEmptyLine, ensureGeminiHome } from "./utils.js";
 
 const __moduleDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -75,10 +75,6 @@ function renderApiAccessNote(env: Record<string, string>): string {
   ].join("\n");
 }
 
-function geminiSkillsHome(): string {
-  return path.join(os.homedir(), ".gemini", "skills");
-}
-
 /**
  * Inject Paperclip skills directly into `~/.gemini/skills/` via symlinks.
  * This avoids needing GEMINI_CLI_HOME overrides, so the CLI naturally finds
@@ -89,11 +85,13 @@ async function ensureGeminiSkillsInjected(
   skillsEntries: Array<{ key: string; runtimeName: string; source: string }>,
   desiredSkillNames?: string[],
 ): Promise<void> {
+  const geminiHome = await ensureGeminiHome(process.env as Record<string, string>).catch(() => null);
+  const skillsHome = geminiHome ? path.join(geminiHome, "skills") : path.join(os.homedir(), ".gemini", "skills");
+
   const desiredSet = new Set(desiredSkillNames ?? skillsEntries.map((entry) => entry.key));
   const selectedEntries = skillsEntries.filter((entry) => desiredSet.has(entry.key));
   if (selectedEntries.length === 0) return;
 
-  const skillsHome = geminiSkillsHome();
   try {
     await fs.mkdir(skillsHome, { recursive: true });
   } catch (err) {
@@ -355,12 +353,13 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
 
     const proc = await runChildProcess(runId, command, args, {
       cwd,
-      env,
+      env: runtimeEnv as Record<string, string>,
       timeoutSec,
       graceSec,
       onSpawn,
       onLog,
     });
+
     return {
       proc,
       parsed: parseGeminiJsonl(proc.stdout),

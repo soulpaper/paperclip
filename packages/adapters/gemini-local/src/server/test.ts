@@ -17,7 +17,7 @@ import {
 } from "@paperclipai/adapter-utils/server-utils";
 import { DEFAULT_GEMINI_LOCAL_MODEL } from "../index.js";
 import { detectGeminiAuthRequired, detectGeminiQuotaExhausted, parseGeminiJsonl } from "./parse.js";
-import { firstNonEmptyLine } from "./utils.js";
+import { firstNonEmptyLine, ensureGeminiHome } from "./utils.js";
 
 function summarizeStatus(checks: AdapterEnvironmentCheck[]): AdapterEnvironmentTestResult["status"] {
   if (checks.some((check) => check.level === "error")) return "fail";
@@ -132,7 +132,10 @@ export async function testEnvironment(
         hint: "Use the `gemini` CLI command to run the automatic installation and auth probe.",
       });
     } else {
+      await ensureGeminiHome(runtimeEnv).catch(() => {});
+
       const model = asString(config.model, DEFAULT_GEMINI_LOCAL_MODEL).trim();
+
       const approvalMode = asString(config.approvalMode, asBoolean(config.yolo, false) ? "yolo" : "default");
       const sandbox = asBoolean(config.sandbox, false);
       const helloProbeTimeoutSec = Math.max(1, asNumber(config.helloProbeTimeoutSec, 45));
@@ -158,12 +161,13 @@ export async function testEnvironment(
         args,
         {
           cwd,
-          env,
+          env: runtimeEnv as Record<string, string>,
           timeoutSec: helloProbeTimeoutSec,
           graceSec: 5,
           onLog: async () => { },
         },
       );
+
       const parsed = parseGeminiJsonl(probe.stdout);
       const detail = summarizeProbeDetail(probe.stdout, probe.stderr, parsed.errorMessage);
       const authMeta = detectGeminiAuthRequired({
