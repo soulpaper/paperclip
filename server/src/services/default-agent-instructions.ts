@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 const DEFAULT_AGENT_BUNDLE_FILES = {
   default: ["AGENTS.md"],
   ceo: ["AGENTS.md", "HEARTBEAT.md", "SOUL.md", "TOOLS.md"],
+  leader: ["AGENTS.md"],
 } as const;
 
 type DefaultAgentBundleRole = keyof typeof DEFAULT_AGENT_BUNDLE_FILES;
@@ -22,6 +23,17 @@ export async function loadDefaultAgentInstructionsBundle(role: DefaultAgentBundl
   return Object.fromEntries(entries);
 }
 
-export function resolveDefaultAgentInstructionsBundleRole(role: string): DefaultAgentBundleRole {
-  return role === "ceo" ? "ceo" : "default";
+/**
+ * Resolves the instructions bundle tier for an agent based on org chart position.
+ * - CEO role → ceo bundle
+ * - Reports directly to a CEO → leader bundle
+ * - Everyone else → default bundle
+ */
+export function resolveDefaultAgentInstructionsBundleRole(
+  role: string,
+  managerRole?: string | null,
+): DefaultAgentBundleRole {
+  if (role === "ceo") return "ceo";
+  if (managerRole === "ceo") return "leader";
+  return "default";
 }

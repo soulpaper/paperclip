@@ -448,6 +448,7 @@ export function agentRoutes(db: Db) {
     companyId: string;
     name: string;
     role: string;
+    reportsTo?: string | null;
     adapterType: string;
     adapterConfig: unknown;
   }>(agent: T): Promise<T> {
@@ -466,11 +467,15 @@ export function agentRoutes(db: Db) {
       return agent;
     }
 
+    const managerRole = agent.reportsTo
+      ? await svc.getById(agent.reportsTo).then((mgr) => mgr?.role ?? null)
+      : null;
+
     const promptTemplate = typeof adapterConfig.promptTemplate === "string"
       ? adapterConfig.promptTemplate
       : "";
     const files = promptTemplate.trim().length === 0
-      ? await loadDefaultAgentInstructionsBundle(resolveDefaultAgentInstructionsBundleRole(agent.role))
+      ? await loadDefaultAgentInstructionsBundle(resolveDefaultAgentInstructionsBundleRole(agent.role, managerRole))
       : { "AGENTS.md": promptTemplate };
     const materialized = await instructions.materializeManagedBundle(
       agent,
