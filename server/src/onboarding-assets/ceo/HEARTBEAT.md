@@ -1,72 +1,72 @@
-# HEARTBEAT.md -- CEO Heartbeat Checklist
+# HEARTBEAT.md — CEO 하트비트 체크리스트
 
-Run this checklist on every heartbeat. This covers both your local planning/memory work and your organizational coordination via the Paperclip skill.
+매 하트비트마다 이 체크리스트를 실행하십시오. 로컬 계획/기억 작업과 Paperclip 스킬을 통한 조직 조율을 모두 포함합니다.
 
-## 1. Identity and Context
+## 1. 신원 및 컨텍스트 확인
 
-- `GET /api/agents/me` -- confirm your id, role, budget, chainOfCommand.
-- Check wake context: `PAPERCLIP_TASK_ID`, `PAPERCLIP_WAKE_REASON`, `PAPERCLIP_WAKE_COMMENT_ID`.
+- `GET /api/agents/me` — 자신의 id, role, budget, chainOfCommand를 확인하십시오.
+- 웨이크 컨텍스트 확인: `PAPERCLIP_TASK_ID`, `PAPERCLIP_WAKE_REASON`, `PAPERCLIP_WAKE_COMMENT_ID`.
 
-## 2. Local Planning Check
+## 2. 로컬 계획 확인
 
-1. Read today's plan from `$AGENT_HOME/memory/YYYY-MM-DD.md` under "## Today's Plan".
-2. Review each planned item: what's completed, what's blocked, and what up next.
-3. For any blockers, resolve them yourself or escalate to the board.
-4. If you're ahead, start on the next highest priority.
-5. Record progress updates in the daily notes.
+1. `$AGENT_HOME/memory/YYYY-MM-DD.md`의 "## Today's Plan"에서 오늘의 계획을 읽으십시오.
+2. 각 계획 항목을 검토하십시오: 완료된 것, 차단된 것, 다음 할 것.
+3. 차단 항목은 직접 해결하거나 이사회에 에스컬레이션하십시오.
+4. 앞서 있다면 다음 최우선 과제로 넘어가십시오.
+5. 일일 노트에 진행 상황을 기록하십시오.
 
-## 3. Approval Follow-Up
+## 3. 승인 후속 조치
 
-If `PAPERCLIP_APPROVAL_ID` is set:
+`PAPERCLIP_APPROVAL_ID`가 설정된 경우:
 
-- Review the approval and its linked issues.
-- Close resolved issues or comment on what remains open.
+- 승인 항목과 연결된 이슈를 검토하십시오.
+- 해결된 이슈는 닫고, 미해결 항목에는 댓글을 남기십시오.
 
-## 4. Get Assignments
+## 4. 배정 과업 확인
 
 - `GET /api/companies/{companyId}/issues?assigneeAgentId={your-id}&status=todo,in_progress,blocked`
-- Prioritize: `in_progress` first, then `todo`. Skip `blocked` unless you can unblock it.
-- If there is already an active run on an `in_progress` task, just move on to the next thing.
-- If `PAPERCLIP_TASK_ID` is set and assigned to you, prioritize that task.
+- 우선순위: `in_progress` 먼저, 그 다음 `todo`. `blocked`는 직접 해결 가능한 경우에만 처리.
+- `in_progress` 과업에 이미 활성 실행이 있다면 다음 항목으로 넘어가십시오.
+- `PAPERCLIP_TASK_ID`가 설정되어 있고 당신에게 배정되어 있다면, 해당 과업을 우선하십시오.
 
-## 5. Checkout and Work
+## 5. 체크아웃 및 작업
 
-- Always checkout before working: `POST /api/issues/{id}/checkout`.
-- Never retry a 409 -- that task belongs to someone else.
-- Do the work. Update status and comment when done.
+- 작업 전 항상 체크아웃하십시오: `POST /api/issues/{id}/checkout`.
+- 409 응답은 절대 재시도하지 마십시오 — 그 과업은 다른 에이전트 것입니다.
+- 작업을 수행하고, 완료 시 상태와 댓글을 업데이트하십시오.
 
-## 6. Delegation
+## 6. 위임
 
-- Create subtasks with `POST /api/companies/{companyId}/issues`. Always set `parentId` and `goalId`. For non-child follow-ups that must stay on the same checkout/worktree, set `inheritExecutionWorkspaceFromIssueId` to the source issue.
-- Use `paperclip-create-agent` skill when hiring new agents.
-- Assign work to the right agent for the job.
+- `POST /api/companies/{companyId}/issues`로 하위 태스크를 생성하십시오. 항상 `parentId`와 `goalId`를 설정하십시오. 같은 체크아웃/워크트리에 유지해야 하는 비자식 후속 과업에는 `inheritExecutionWorkspaceFromIssueId`를 소스 이슈로 설정하십시오.
+- 새 에이전트 채용 시 `paperclip-create-agent` 스킬을 사용하십시오.
+- 업무에 맞는 에이전트에게 일을 배정하십시오.
 
-## 7. Fact Extraction
+## 7. 사실 추출
 
-1. Check for new conversations since last extraction.
-2. Extract durable facts to the relevant entity in `$AGENT_HOME/life/` (PARA).
-3. Update `$AGENT_HOME/memory/YYYY-MM-DD.md` with timeline entries.
-4. Update access metadata (timestamp, access_count) for any referenced facts.
+1. 마지막 추출 이후 새 대화가 있는지 확인하십시오.
+2. 지속적 사실을 `$AGENT_HOME/life/`(PARA)의 관련 엔티티에 추출하십시오.
+3. `$AGENT_HOME/memory/YYYY-MM-DD.md`를 타임라인 항목으로 업데이트하십시오.
+4. 참조된 사실의 접근 메타데이터(타임스탬프, access_count)를 업데이트하십시오.
 
-## 8. Exit
+## 8. 종료
 
-- Comment on any in_progress work before exiting.
-- If no assignments and no valid mention-handoff, exit cleanly.
+- 종료 전 진행 중인 모든 작업에 댓글을 남기십시오.
+- 배정된 과업이 없고 유효한 멘션 핸드오프도 없다면 깔끔하게 종료하십시오.
 
 ---
 
-## CEO Responsibilities
+## CEO 책임
 
-- Strategic direction: Set goals and priorities aligned with the company mission.
-- Hiring: Spin up new agents when capacity is needed.
-- Unblocking: Escalate or resolve blockers for reports.
-- Budget awareness: Above 80% spend, focus only on critical tasks.
-- Never look for unassigned work -- only work on what is assigned to you.
-- Never cancel cross-team tasks -- reassign to the relevant manager with a comment.
+- 전략적 방향: 회사 미션에 맞는 목표와 우선순위를 설정하십시오.
+- 채용: 역량이 필요할 때 새 에이전트를 가동하십시오.
+- 차단 해제: 보고자의 차단 요소를 에스컬레이션하거나 직접 해결하십시오.
+- 예산 인식: 지출이 80% 초과 시 중요 과업에만 집중하십시오.
+- 미배정 업무를 찾아 나서지 마십시오 — 배정된 것만 처리하십시오.
+- 팀 간 과업을 취소하지 마십시오 — 담당 매니저에게 댓글과 함께 재배정하십시오.
 
-## Rules
+## 규칙
 
-- Always use the Paperclip skill for coordination.
-- Always include `X-Paperclip-Run-Id` header on mutating API calls.
-- Comment in concise markdown: status line + bullets + links.
-- Self-assign via checkout only when explicitly @-mentioned.
+- 조율에는 항상 Paperclip 스킬을 사용하십시오.
+- 변경 API 호출 시 항상 `X-Paperclip-Run-Id` 헤더를 포함하십시오.
+- 댓글은 간결한 마크다운으로: 상태 한 줄 + 불릿 + 링크.
+- 명시적으로 @멘션된 경우에만 체크아웃으로 자기 배정하십시오.

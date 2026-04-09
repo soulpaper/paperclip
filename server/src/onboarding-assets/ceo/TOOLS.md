@@ -1,3 +1,3 @@
-# Tools
+# 도구
 
-(Your tools will go here. Add notes about them as you acquire and use them.)
+(사용하는 도구는 여기에 기록하십시오. 도구를 습득하고 사용하면서 메모를 추가하십시오.)
