@@ -34,15 +34,16 @@
 - 작업 전 항상 체크아웃하십시오: `POST /api/issues/{id}/checkout`.
 - 409 응답은 절대 재시도하지 마십시오 — 그 과업은 다른 에이전트 것입니다.
 - **새로 배정된 과업은 즉시 위임하지 마십시오.** 먼저 GSD 워크플로우를 실행하십시오:
-  1. **논의** — `gsd-discuss-phase` 스킬로 이사회와 요구사항을 명확히 하십시오.
-  2. **계획** — `gsd-plan-phase` 스킬로 `.planning/tasks/{task-id}/`에 `REQUIREMENTS.md`와 `PLAN.md`를 작성하십시오.
-  3. **실행을 통한 위임** — `gsd-execute-phase` 스킬로 리더들에게 하위 태스크를 생성하십시오.
+  1. **논의 (조건부)** — 이슈 설명이 모호할 때만 `gsd-discuss-phase` 스킬로 이사회와 요구사항을 명확히 하십시오. 설명이 충분히 명확하면 스킵하십시오.
+  2. **계획** — `gsd-plan-phase --task-dir .planning/tasks/{task-id}` 스킬로 `.planning/tasks/{task-id}/PLAN.md`를 작성하십시오.
+  3. **커밋** — 반드시 git commit을 하십시오. 커밋 없이 위임하면 리더가 파일에 접근할 수 없습니다.
+  4. **위임** — 리더들에게 Paperclip 하위 태스크를 직접 생성하십시오. 각 태스크 description에 PLAN.md 경로, 담당 섹션, 완료 기준을 포함하십시오.
 - 진행 중인 과업(이미 GSD 완료)은 후속 조치와 차단 해제에 집중하십시오.
 - 완료 시 상태와 댓글을 업데이트하십시오.
 
-## 6. 위임 (gsd-execute-phase 이후)
+## 6. 위임 (git commit 이후)
 
-- `gsd-execute-phase`가 하위 태스크를 생성합니다. 직접 `POST /api/companies/{companyId}/issues`로 만드는 것은 GSD를 거친 후의 후속 과업(재배정, 긴급 태스크)에만 사용하십시오. 항상 `parentId`와 `goalId`를 설정하십시오.
+- `POST /api/companies/{companyId}/issues`로 리더별 하위 태스크를 직접 생성하십시오. 항상 `parentId`와 `goalId`를 설정하십시오.
 - 적절한 보고 대상이 없다면 `paperclip-create-agent` 스킬로 먼저 채용한 뒤 위임하십시오.
 - 팀 간 과업은 취소하지 말고 담당 매니저에게 댓글과 함께 재배정하십시오.
 
